@@ -52,7 +52,6 @@ function draw() {
   drawSprites();
 }
 
-
 //every mouse press
 function mousePressed() {
   //I create a sprite at mouse position
