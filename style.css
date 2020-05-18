@@ -1,0 +1,104 @@
+@import url(https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise);
+
+
+body {
+    padding: 0;
+    margin: 0;
+  }
+  .name-box {
+    background-color:rgb(109, 79, 216); 
+    width: 300px;
+    height:200px;
+    position: absolute;
+    top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index:1;
+    border-radius: 25px;
+    padding: 20px;
+  }
+
+
+  h1 {
+    text-align: center;
+    color: white;
+  }
+
+  p {
+    text-align: center;
+    color: white;
+  }
+
+  .fab{
+    font-size: 5vh;
+    color: white;
+  }
+  .fas{
+   
+    font-size: 5vh;
+    color: white;
+  }
+
+  a:link {
+    text-decoration: none;
+  }
+
+  .fas {
+        font-size: 4vh;
+        color: #f4eeff;
+        padding: 0.5vh 1vh;
+  }
+
+  .fab {
+    left: 50%;
+    font-size: 4vh;
+    color: #f4eeff;
+    padding: 0.5vh 1vh;
+}
+
+  
+  .content {
+    background-color:rgb(109, 79, 216); 
+  
+    /* Keeps content in center of page and on top */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index:1;
+    border-radius: 25px;
+    padding: 20px;
+    width: 300px;
+    height:200px;
+    position: absolute;
+  
+  }
+
+  
+ 
+ * {
+    font-family: 'Waiting for the Sunrise', 'monospace';
+ }
+
+ .typewriter h1 {
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .15em rgb(109, 79, 216);  /* The typwriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .15em; /* Adjust as needed */
+    animation: 
+      typing 3.5s steps(40, end),
+      blink-caret .75s step-end infinite;
+  }
+  
+  /* The typing effect */
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  /* The typewriter cursor effect */
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: orange; }
+  }

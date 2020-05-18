@@ -1,43 +1,34 @@
-let t = 0; // time variable
-var GRAVITY = 0.2;
-var img;
+let numBalls = 30;
+let spring = 0.05;
+let gravity = 0.03;
+let friction = -0.9;
+let balls = [];
 
 function setup() {
   var canvas = createCanvas(windowWidth, windowHeight);
   canvas.position(0,0);
   canvas.style("z-index",  "-1" );
 
+  for (let i = 0; i < numBalls; i++) {
+    balls[i] = new Ball(
+      random(width),
+      random(height),
+      random(30, 70),
+      i,
+      balls
+    );
+  }
   noStroke();
-  fill(109, 79, 216);
-
+  fill(114, 214,191);
 }
 
 function draw() {
-
-  background(255, 255,255); // translucent background (creates trails)
-
-  // make a x and y grid of ellipses
-  for (let x = 0; x <= width; x = x + 100) {
-    for (let y = 0; y <= height; y = y + 100) {
-      // starting point of each circle depends on mouse position
-      const xAngle = map(mouseX, 0, width, -4 * PI, 4 * PI, true);
-      const yAngle = map(mouseY, 0, height, -4 * PI, 4 * PI, true);
-      // and also varies based on the particle's location
-      const angle = xAngle * (x / width) + yAngle * (y / height);
-
-      // each particle moves in a circle
-      const myX = x + 100 * cos(2 * PI * t + angle);
-      const myY = y + 100 * sin(2 * PI * t + angle);
-
-      ellipse(myX, myY, 10); // draw particle
-    }
-  }
-
-
-
-  //the best way to organize sprites is to use a custom group (see Group class)
-  //however, all sprites are automatically added to a default group allSprites
-  //that you can access like a normal array of objects
+  background(255);
+  balls.forEach(ball => {
+    ball.collide();
+    ball.move();
+    ball.display();
+  });
 
   for(var i=0; i<allSprites.length; i++)
   {
@@ -45,7 +36,7 @@ function draw() {
 
     //adding a speed at 90 degrees (down)
     //equivalent to: mySprite.velocity.y += GRAVITY;
-    mySprite.addSpeed(GRAVITY, 90);
+    mySprite.addSpeed(gravity, 90);
 
     //even if they are out of the canvas, sprites keep getting updated
     //consuming precious memory
@@ -61,17 +52,101 @@ function draw() {
   drawSprites();
 }
 
+
 //every mouse press
 function mousePressed() {
-  t = t + 1; // update time
   //I create a sprite at mouse position
   var newSprite = createSprite(mouseX, mouseY);
 
   //assign an animation
-  newSprite.addAnimation('normal','assets/elephant-small.png');
+  newSprite.addAnimation('normal','assets/elephant-small.png','assets/duck.png','assets/chick.png','assets/baymax.png','assets/hamster.png');
 
   //and set it to a random frame
   newSprite.animation.stop();
   var f = round(random(0, newSprite.animation.getLastFrame()));
   newSprite.animation.changeFrame(f);
+
+}
+
+function keyPressed() {
+
+  balls.forEach(ball => {
+    if (keyCode === UP_ARROW) {
+      ball.y = ball.y * -100;
+    } else if (keyCode === DOWN_ARROW) {
+     ball.y = ball.y * 100;
+    }
+    if (keyCode === LEFT_ARROW) {
+      ball.x = ball.x * -50;
+    } else if (keyCode === RIGHT_ARROW) {
+      ball.x = ball.x * 50;
+    }
+   });
+}
+
+class Ball {
+  constructor(xin, yin, din, idin, oin) {
+    this.x = xin;
+    this.y = yin;
+    this.vx = 0;
+    this.vy = 0;
+    this.diameter = din;
+    this.id = idin;
+    this.others = oin;
+  }
+
+  collide() {
+    for (let i = this.id + 1; i < numBalls; i++) {
+      // console.log(others[i]);
+      let dx = this.others[i].x - this.x;
+      let dy = this.others[i].y - this.y;
+      let distance = sqrt(dx * dx + dy * dy);
+      let minDist = this.others[i].diameter / 2 + this.diameter / 2;
+      //   console.log(distance);
+      //console.log(minDist);
+      if (distance < minDist) {
+        //console.log("2");
+        let angle = atan2(dy, dx);
+        let targetX = this.x + cos(angle) * minDist;
+        let targetY = this.y + sin(angle) * minDist;
+        let ax = (targetX - this.others[i].x) * spring;
+        let ay = (targetY - this.others[i].y) * spring;
+        this.vx -= ax;
+        this.vy -= ay;
+        this.others[i].vx += ax;
+        this.others[i].vy += ay;
+      }
+    }
+  }
+
+  
+// attractionPoint (magnitude, pointX, pointY) {
+//     var angle = atan2(pointY-this.y, pointX-this.x);
+//     this.x += cos(angle) * magnitude;
+//     this.y += sin(angle) * magnitude;
+//   };
+
+  move() {
+    this.vy += gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x + this.diameter / 2 > width) {
+      this.x = width - this.diameter / 2;
+      this.vx *= friction;
+    } else if (this.x - this.diameter / 2 < 0) {
+      this.x = this.diameter / 2;
+      this.vx *= friction;
+    }
+    if (this.y + this.diameter / 2 > height) {
+      this.y = height - this.diameter / 2;
+      this.vy *= friction;
+    } else if (this.y - this.diameter / 2 < 0) {
+      this.y = this.diameter / 2;
+      this.vy *= friction;
+    }
+  }
+
+  display() {
+    ellipse(this.x, this.y, this.diameter, this.diameter);
+  }
 }
